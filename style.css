@@ -1,0 +1,144 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f7fb;
+  color: #1a2636;
+}
+button, input { font: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+button:focus-visible, input:focus-visible { outline: 3px solid #4c91d4; outline-offset: 2px; }
+.app { width: min(100%, 420px); margin: 0 auto; padding: 24px 18px 45px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+h1 { font-size: 23px; margin: 0; }
+.demo { color: #6b7787; font-size: 12px; }
+.summary { background: white; border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 4px 20px #2030470d; }
+.muted { color: #657284; font-size: 14px; margin: 0; }
+.balance { font-size: clamp(30px, 9vw, 39px); font-weight: 750; margin: 8px 0 18px; letter-spacing: -1px; overflow-wrap: anywhere; }
+.daily { border-top: 1px solid #e7ebf0; padding-top: 15px; display: flex; align-items: center; justify-content: space-between; }
+.daily span { color: #657284; font-size: 14px; }
+.daily strong { font-size: 21px; }
+.hint { color: #657284; font-size: 12px; margin: 12px 0 0; line-height: 1.5; }
+.salary-link { border: 0; background: transparent; color: #245eab; font-size: 12px; padding: 10px 2px 0; text-decoration: underline; }
+.entry { margin-top: 24px; }
+.entry-heading { display: flex; justify-content: space-between; align-items: center; }
+h2 { font-size: 17px; margin: 0; }
+.clear { background: transparent; border: 0; color: #607085; padding: 8px; font-size: 13px; }
+.amount { display: block; text-align: right; font-size: 43px; font-weight: 700; padding: 10px 3px 16px; min-height: 79px; overflow: hidden; }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.keypad button { height: 60px; border: 0; border-radius: 13px; background: white; font-size: 25px; font-weight: 600; box-shadow: 0 2px 8px #2030470b; }
+.keypad button:active { background: #e4edf9; transform: scale(.98); }
+.register { width: 100%; height: 55px; margin-top: 13px; background: #245eab; border: 0; border-radius: 13px; color: white; font-size: 17px; font-weight: 700; }
+.register:disabled { opacity: .4; cursor: not-allowed; }
+.notice { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; margin-top: 12px; }
+.notice button { background: white; color: #245eab; border: 1px solid #c6d5e8; border-radius: 9px; padding: 8px 10px; white-space: nowrap; }
+[hidden] { display: none !important; }
+.footnote { font-size: 12px; line-height: 1.6; color: #8490a1; margin-top: 24px; }
+.salary-screen { margin-top: 20px; background: white; padding: 24px 20px 28px; border-radius: 20px; box-shadow: 0 4px 20px #2030470d; }
+.salary-icon { width: 49px; height: 49px; border-radius: 50%; background: #e4efff; color: #245eab; display: grid; place-items: center; font-weight: 800; font-size: 25px; margin-bottom: 16px; }
+.salary-screen h2 { font-size: 23px; }
+.salary-intro { color: #647184; font-size: 14px; line-height: 1.6; margin: 10px 0 6px; }
+.salary-period { font-size: 13px; color: #245eab; background: #e9f1fc; padding: 12px; border-radius: 10px; margin: 12px 0 22px; }
+.field-label { display: block; font-size: 15px; font-weight: 700; margin-bottom: 9px; }
+.salary-input-wrap { display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 12px; padding: 4px 14px; gap: 7px; }
+.salary-input-wrap span { color: #647184; font-size: 24px; }
+.salary-input-wrap input { border: 0; outline: none; width: 100%; height: 52px; font-size: 26px; font-weight: 700; min-width: 0; color: #1a2636; }
+.salary-input-wrap:focus-within { border-color: #245eab; }
+.field-note { color: #7e8997; font-size: 12px; line-height: 1.6; }
+.cancel-edit { display: block; background: transparent; color: #647184; border: 0; margin: 14px auto 0; padding: 10px 16px; }
+/* Ver.0.3 支払い予定 */
+.screen-heading { margin: 12px 0 18px; }
+.screen-heading h2 { font-size: 23px; }
+.screen-heading p { color: #647184; line-height: 1.6; font-size: 13px; margin: 8px 0; }
+.payments-screen { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 20px #2030470d; }
+.payment-form { display: flex; flex-direction: column; }
+.payment-form > .field-label { margin-top: 13px; }
+.payment-form input[type="text"], .payment-form input[type="date"], .payment-form select { width: 100%; border: 1px solid #cbd5e1; color: #1a2636; background: #fff; height: 50px; border-radius: 12px; padding: 0 12px; font-size: 17px; }
+.payment-form select { appearance: auto; }
+.payment-kind { display: flex; padding: 0; border: 0; margin: 17px 0 14px; gap: 10px; }
+.payment-kind legend { margin-bottom: 8px; }
+.payment-kind label { background: #f3f6fa; flex: 1; border-radius: 10px; padding: 12px 9px; font-size: 15px; display: flex; align-items: center; gap: 6px; justify-content: center; }
+.payment-kind input { accent-color: #245eab; width: 17px; height: 17px; }
+#monthly-field, #once-field { margin-bottom: 8px; }
+.payment-preview { border-radius: 11px; background: #eef4fc; color: #255b9b; padding: 11px 13px; font-size: 12px; line-height: 1.6; margin-top: 9px; }
+.reserved-hint { font-size: 12px; color: #607085; background: #f3f6fa; padding: 8px 12px; border-radius: 10px; margin: 12px 0 0; }
+.scheduled-summary { display: flex; justify-content: space-between; align-items: center; background: #eef4fc; color: #234e7f; border-radius: 12px; padding: 15px 13px; font-size: 13px; margin-top: 26px; }
+.scheduled-summary strong { font-size: 21px; }
+.list-heading { font-size: 16px; margin: 22px 0 10px; }
+.payment-list { display: grid; gap: 9px; }
+.payment-item { border: 1px solid #e5eaf0; border-radius: 12px; padding: 12px; }
+.payment-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+.payment-item-name { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+.payment-item-amount { font-weight: 700; white-space: nowrap; }
+.payment-item-detail { color: #6b7787; font-size: 12px; margin: 8px 0; line-height: 1.7; }
+.payment-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.payment-actions button { border: 1px solid #d4dfeb; border-radius: 9px; padding: 7px 13px; background: #fff; color: #245eab; font-size: 13px; }
+.payment-actions button.delete { color: #ad3542; }
+.empty-payments { color: #647184; background: #f5f7fb; padding: 18px; font-size: 13px; border-radius: 12px; text-align: center; }
+.bottom-nav { margin-top: 18px; background: white; border-radius: 15px; display: grid; grid-template-columns: repeat(3,1fr); padding: 7px; gap: 8px; box-shadow: 0 4px 20px #2030470d; }
+.bottom-nav button { border: 0; background: transparent; color: #647184; padding: 10px 4px; border-radius: 10px; display: grid; justify-items: center; gap: 3px; font-size: 20px; }
+.bottom-nav button span { font-size: 12px; }
+.bottom-nav button.active { color: #245eab; background: #eaf2fd; font-weight: 700; }
+
+/* Ver.0.4 給与期間単位のカレンダー */
+.history-screen { background: white; border-radius: 20px; padding: 17px 13px 22px; box-shadow: 0 4px 20px #2030470d; }
+.history-switch { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 5px; align-items: center; margin-bottom: 14px; }
+.history-switch button { border: 1px solid #d8e1ec; background: white; border-radius: 8px; min-height: 36px; font-size: 11px; color: #245eab; padding: 5px; }
+.history-switch button:disabled { opacity: .3; cursor: not-allowed; }
+.history-switch strong { font-size: 13px; text-align: center; line-height: 1.5; }
+.history-summary { border-radius: 13px; background: #f0f5fc; padding: 16px 12px; text-align: center; }
+.history-summary > span { display: block; color: #657284; font-size: 12px; }
+.history-summary > strong { display: block; font-size: 29px; letter-spacing: -.5px; margin-top: 5px; }
+.history-totals { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; border-top: 1px solid #dfe7f2; padding-top: 12px; margin-top: 11px; }
+.history-totals div { display: grid; gap: 4px; font-size: 10px; color: #657284; }
+.history-totals strong { font-size: 12px; color: #1a2636; overflow-wrap: anywhere; }
+.calendar { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 3px; margin-top: 18px; }
+.calendar-weekday { font-size: 11px; color: #657284; text-align: center; padding-bottom: 8px; }
+.calendar-weekday:first-child { color: #c15a5a; }
+.calendar-weekday:nth-child(7) { color: #386fbe; }
+.calendar-day { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border: 1px solid #e6ebf2; border-radius: 9px; background: white; min-height: 68px; padding: 6px 2px 3px; gap: 3px; min-width: 0; }
+.calendar-day.inactive { background: #f7f8fa; border-color: #f0f2f5; }
+.calendar-day.selected { border: 2px solid #245eab; background: #eaf2fd; padding: 5px 1px 2px; }
+.calendar-day:disabled { cursor: default; }
+.calendar-day .date-number { font-size: 12px; font-weight: 600; }
+.calendar-day .date-spent { font-size: 9px; color: #3d526c; letter-spacing: -.5px; white-space: nowrap; }
+.calendar-day .date-salary { font-size: 10px; color: #23804f; font-weight: 700; }
+.calendar-day .payment-dot { font-size: 10px; color: #5978b1; line-height: .8; }
+.calendar-help { font-size: 10px; text-align: center; color: #7c8997; margin: 11px 0 19px; line-height: 1.6; }
+.history-detail { border-top: 1px solid #e7ebf0; padding-top: 17px; }
+.history-detail h3 { font-size: 17px; margin: 0 0 13px; }
+.history-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 0; border-bottom: 1px solid #eef1f5; font-size: 13px; }
+.history-line strong { white-space: nowrap; }
+.history-positive { color: #23804f; }
+.history-note { font-size: 11px; color: #7c8997; line-height: 1.5; padding: 5px 0 9px; }
+.history-item { display: flex; align-items: center; justify-content: space-between; gap: 5px; padding: 12px 0; border-bottom: 1px solid #eef1f5; }
+.history-item strong { font-size: 16px; }
+.history-actions { display: flex; gap: 5px; }
+.history-actions button,.history-edit button,.history-undo button { border: 1px solid #d8e1ec; background: white; color: #245eab; border-radius: 8px; padding: 8px 9px; font-size: 12px; }
+.history-actions .danger { color: #a93442; }
+.history-edit { display: flex; gap: 6px; align-items: center; width: 100%; }
+.history-edit input { width: 100%; min-width: 0; height: 43px; font-size: 19px; border-radius: 9px; padding: 7px; border: 1px solid #cbd5e1; }
+.history-edit .save-edit { color: white; background: #245eab; }
+.history-empty { color: #7c8997; font-size: 13px; padding: 12px 0; }
+.history-undo { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 0; font-size: 12px; color: #647184; }
+.day-balance { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 14px 10px; background: #f3f6fa; border-radius: 11px; margin-top: 12px; }
+.day-balance span { font-size: 11px; color: #657284; }
+.day-balance strong { font-size: 19px; white-space: nowrap; }
+@media(max-width:360px) { .app { padding-left: 11px; padding-right: 11px; } .calendar-day { min-height: 63px; } .calendar-day .date-spent { font-size: 8px; } .history-actions button { padding: 6px; } }
+
+/* Ver.0.5 初期残額入力 */
+.alternate-start { display:block; margin: 0 auto; color:#667789; }
+
+
+
+/* Ver.0.7: 目立たないクラウド状態表示と初回だけのログイン */
+.header-tools {display:flex;align-items:center;gap:7px;}
+.cloud-status {font-size:10px;border-radius:100px;background:#e9f4ed;color:#167349;padding:7px 9px;white-space:nowrap;max-width:123px;text-overflow:ellipsis;overflow:hidden;}
+.cloud-status.pending {background:#fff3e0;color:#9a610c;}
+.cloud-status.error {background:#ffebef;color:#ad3542;}
+.login-screen {margin-top:20px;background:#fff;padding:24px 20px 25px;border-radius:20px;box-shadow:0 4px 20px #2030470d;}
+.login-screen h2 {font-size:22px;}
+.login-screen form {margin-top:25px;}
+.login-screen input {display:block;width:100%;margin:0 0 17px;min-height:50px;border-radius:12px;border:1px solid #cbd5e1;padding:0 12px;font-size:16px;background:white;}
+.login-error {color:#b13241;background:#fff0f1;border-radius:10px;padding:12px;font-size:13px;line-height:1.6;}
+@media(max-width:360px) { .header-tools {gap:4px;} .cloud-status {max-width:112px;font-size:9px;} }
