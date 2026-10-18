@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f5f7fb">
   <title>おさいふ | 家計簿</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=0.8">
   <script src="firebase-config.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=0.8" defer></script>
   <script src="cloud-sync.js" defer></script>
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="icon" type="image/png" href="icon.png">
 </head>
+
 <body>
   <main class="app">
     <header class="header">
       <h1>おさいふ</h1>
       <div class="header-tools">
-        <span class="demo">Ver.0.7</span>
         <span id="cloud-status" class="cloud-status" role="status" aria-live="polite">確認中…</span>
       </div>
     </header>
@@ -49,13 +49,11 @@
       <div class="salary-icon" aria-hidden="true">¥</div>
       <h2 id="initial-title">いま使えるお金を入力</h2>
       <p class="salary-intro" id="initial-description">今から使い始めるため、現在の残額を入力してください。</p>
-      <p class="salary-period" id="initial-period"></p>
       <form id="initial-form">
         <label class="field-label" for="initial-input">いま使えるお金</label>
         <div class="salary-input-wrap"><span>¥</span>
           <input id="initial-input" type="text" inputmode="numeric" autocomplete="off" maxlength="9" placeholder="例：38500" required>
         </div>
-        <p class="field-note">今日時点の残額を入力します。すでに確保した固定費は二重に差し引きません。</p>
         <button class="register" id="initial-save" type="submit" disabled>この残額で始める</button>
       </form>
       <button type="button" class="cancel-edit" id="initial-cancel" hidden>戻る</button>
@@ -66,7 +64,6 @@
       <div class="salary-icon" aria-hidden="true">¥</div>
       <h2 id="salary-title">給与を登録</h2>
       <p class="salary-intro" id="salary-intro">新しい給与期間が始まりました。</p>
-      <p class="salary-period" id="salary-period"></p>
       <form id="salary-form">
         <label class="field-label" for="salary-input">今回の手取り給与</label>
         <div class="salary-input-wrap">
@@ -89,7 +86,7 @@
             <strong id="daily-budget">¥0</strong>
           </div>
           <p class="hint" id="period-hint"></p>
-          <p class="reserved-hint" id="reserved-hint"></p>
+          <p class="reserved-hint" id="reserved-hint" aria-label="今期の支払い予定合計"></p>
           <button class="salary-link" type="button" id="edit-salary">給与額を修正</button>
           <button class="salary-link alternate-start" type="button" id="start-from-balance">今の残額から始め直す</button>
         </section>
@@ -124,7 +121,6 @@
       <section class="payments-screen" id="payments-tab" aria-label="支払い予定" hidden>
         <div class="screen-heading">
           <h2>支払い予定</h2>
-          <p>毎月の支払いも、今回だけの支払いもここに登録します。</p>
         </div>
         <form id="payment-form" class="payment-form">
           <label class="field-label" for="payment-name">名前</label>
@@ -147,25 +143,20 @@
             <label class="field-label" for="payment-date">今回だけの支払日</label>
             <input id="payment-date" type="date">
           </div>
-          <p class="field-note">土日は直前の金曜日に調整します。登録した予定は支払日が属する給与期間の予算から、事前に差し引きます。</p>
-          <div class="payment-preview" id="payment-preview" aria-live="polite"></div>
           <button class="register" id="payment-save" type="submit">支払いを登録する</button>
           <button type="button" class="cancel-edit" id="payment-cancel" hidden>編集をキャンセル</button>
         </form>
 
-        <div class="scheduled-summary">
-          <span>今期の支払い予定合計</span>
+        <div class="scheduled-summary" aria-label="今期の支払い予定合計">
           <strong id="planned-total">¥0</strong>
         </div>
         <h3 class="list-heading">登録した支払い</h3>
         <div id="payment-list" class="payment-list"></div>
-        <p class="footnote">ここに登録した支払いは予算から先取り済みです。ホーム画面では重ねて登録しないでください。</p>
       </section>
 
       <section class="history-screen" id="history-tab" aria-label="カレンダー履歴" hidden>
         <div class="screen-heading">
           <h2>履歴カレンダー</h2>
-          <p>給料日から次の給料日前日までが1期間です。</p>
         </div>
         <div class="history-switch">
           <button type="button" id="history-prev">‹ 前の期間</button>
@@ -178,7 +169,6 @@
           <div class="history-totals" id="history-totals"></div>
         </div>
         <div class="calendar" id="history-calendar" aria-label="支出カレンダー"></div>
-        <div class="calendar-help">「給」は給与日・「開始」は利用開始日 ／ 金額は通常支出 ／ ●は支払い予定</div>
         <section class="history-detail" aria-label="選択した日の詳細">
           <h3 id="history-selected-title"></h3>
           <div id="history-selected-contents"></div>
@@ -198,7 +188,6 @@
         <button type="button" id="nav-history">▦<span>履歴</span></button>
         <button type="button" id="nav-payments">▤<span>支払い予定</span></button>
       </nav>
-      <p class="footnote">支出は端末にも保存し、ログイン時はクラウドへ自動同期します。通信できない間は端末に保留し、再接続時に同期します。</p>
     </div>
   </main>
 </body>

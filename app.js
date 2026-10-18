@@ -218,7 +218,6 @@ function showInitialForm(period, record, mode = "new") {
     : mode === "reset"
       ? "今期の給与・通常支出の記録を取り消し、今日から残額を登録し直します。支払い予定は残ります。"
       : "今日から家計簿を使い始めます。固定費などを確保した後の、いま自由に使える金額を入力してください。";
-  el("initial-period").textContent = `今日：${jpDay(new Date())} ／ 次の給料日：${jpDay(period.next)}`;
   el("initial-input").value = mode === "edit" ? String(record.initialBalance) : "";
   el("initial-save").disabled = mode !== "edit";
   el("initial-save").textContent = mode === "edit" ? "変更を保存する" : "この残額で始める";
@@ -233,7 +232,6 @@ function showSalaryForm(period, record, edit = false) {
   el("salary-screen").hidden = false;
   el("salary-title").textContent = edit ? "給与額を修正" : "給与を登録";
   el("salary-intro").textContent = edit ? "登録した給与額を変更できます。" : "新しい給与期間が始まりました。手取り給与を入力してください。";
-  el("salary-period").textContent = `対象期間：${jpDay(period.start)}〜${jpDay(period.end)}`;
   el("salary-input").value = edit ? String(record.salary) : "";
   el("salary-save").textContent = edit ? "変更を保存する" : "給与を確定する";
   el("salary-save").disabled = !edit;
@@ -312,12 +310,10 @@ function render() {
   const days = Math.max(1, daysBetween(dayDate(new Date()), period.next));
   el("balance").textContent = yen(remaining);
   el("daily-budget").textContent = yen(Math.floor(remaining / days));
-  el("reserved-hint").textContent = isInitialPeriod(record)
-    ? `支払い予定：${yen(reserved)}（開始時に考慮済み。後からの変更差額のみ反映）`
-    : `支払い予定：${yen(reserved)}（すでに差し引き済み）`;
+  el("reserved-hint").textContent = yen(reserved);
   el("edit-salary").textContent = isInitialPeriod(record) ? "開始時の残額を修正" : "給与額を修正";
   el("start-from-balance").hidden = isInitialPeriod(record);
-  el("period-hint").textContent = `期間：${jpDay(period.start)}〜${jpDay(period.end)} ／ 次の給料日：${jpDay(period.next)}（残り${days}日）`;
+  el("period-hint").textContent = `次の給料日まで あと${days}日`;
   el("amount").textContent = yen(Number(input || 0));
   el("register").disabled = !(Number(input) > 0);
   el("notice").hidden = lastRegisteredId === null;
@@ -406,16 +402,7 @@ function updatePaymentForm() {
   const type = selectedPaymentType();
   el("monthly-field").hidden = type !== "monthly";
   el("once-field").hidden = type !== "once";
-  const preview = el("payment-preview");
-  if (type === "monthly") {
-    preview.textContent = `毎月${el("payment-day").value}日。土日は直前の金曜日に調整し、その日が含まれる給与期間の予算から先取りします。※存在しない日（例：2月31日）は月末扱いです。`;
-  } else {
-    const nominal = parseDate(el("payment-date").value);
-    if (!nominal) { preview.textContent = "支払日を指定してください。"; return; }
-    const actual = previousFridayIfWeekend(nominal);
-    const target = payrollPeriod(actual);
-    preview.textContent = `実際の支払日：${jpDay(actual)}（${dateKey(actual)}）。給与期間：${dateKey(target.start)}〜${dateKey(target.end)} の予算から先取りします。`;
-  }
+
 }
 
 document.querySelectorAll('input[name="payment-kind"]').forEach(input => input.addEventListener("change", updatePaymentForm));
@@ -474,7 +461,6 @@ function renderPaymentList() {
   const list = el("payment-list");
   list.replaceChildren();
   const period = payrollPeriod();
-  const scheduled = occurrences(period);
   if (data.payments.length === 0) {
     addText(list, "empty-payments", "まだ支払い予定はありません。");
     return;
@@ -485,10 +471,7 @@ function renderPaymentList() {
     const top = addText(card, "payment-item-top", "");
     addText(top, "payment-item-name", payment.name);
     addText(top, "payment-item-amount", yen(payment.amount));
-    const todayEntries = scheduled.filter(x => x.payment.id === payment.id);
-    let detail = payment.type === "monthly" ? `毎月${payment.day}日` : `今回だけ・${payment.date}`;
-    if (todayEntries.length) detail += ` ／ 今期 ${todayEntries.map(x => jpDay(x.adjusted)).join("・")}・合計${yen(todayEntries.reduce((s, x) => s + x.payment.amount, 0))}`;
-    else detail += " ／ 今期の先取りなし";
+    const detail = payment.type === "monthly" ? `毎月${payment.day}日` : `今回だけ・${payment.date}`;
     addText(card, "payment-item-detail", detail);
     const actions = addText(card, "payment-actions", "");
     const edit = addText(actions, "", "編集", "button");
@@ -638,20 +621,15 @@ function renderHistoryDay(period, record, reservedList) {
     const line = addText(contents, "history-line", "");
     addText(line, "", "利用開始時の残額");
     addText(line, "history-positive", yen(record.initialBalance), "strong");
-    addText(contents, "history-note", "初期残額には登録時点の支払い予定が織り込み済みです。");
   } else if (historySelectedDate === period.key && hasStartingAmount(record) && !isInitialPeriod(record)) {
     const line = addText(contents, "history-line", "");
     addText(line, "", "給与入金");
     addText(line, "history-positive", `＋${yen(record.salary)}`, "strong");
-    addText(contents, "history-note", "支払い予定はこの給与期間の初日にまとめて予算から差し引いています。");
   }
   for (const item of reservedList.filter(x => dateKey(x.adjusted) === historySelectedDate)) {
     const line = addText(contents, "history-line", "");
     addText(line, "", item.payment.name);
     addText(line, "", yen(item.payment.amount), "strong");
-    addText(contents, "history-note", isInitialPeriod(record)
-      ? "支払い予定：開始時に考慮済み（登録後の追加・変更差額だけ予算に反映）"
-      : "支払い予定：給与日に先取り済み（二重計上なし）");
   }
   const selectedExpenses = (record?.expenses || []).filter(e => e.date === historySelectedDate);
   if (!selectedExpenses.length) addText(contents, "history-empty", "この日の通常の支出記録はありません。");

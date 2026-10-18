@@ -142,3 +142,14 @@ h2 { font-size: 17px; margin: 0; }
 .login-screen input {display:block;width:100%;margin:0 0 17px;min-height:50px;border-radius:12px;border:1px solid #cbd5e1;padding:0 12px;font-size:16px;background:white;}
 .login-error {color:#b13241;background:#fff0f1;border-radius:10px;padding:12px;font-size:13px;line-height:1.6;}
 @media(max-width:360px) { .header-tools {gap:4px;} .cloud-status {max-width:112px;font-size:9px;} }
+
+/* Ver.0.8: シンプル表示（計算ロジックは変更しない） */
+.hint { margin-top: 9px; font-size: 12px; color: #657284; }
+.reserved-hint { display: block; width: fit-content; margin: 10px auto 1px; padding: 5px 10px; background: #f3f6fa; font-size: 13px; font-weight: 650; }
+.summary { padding: 22px 21px 19px; }
+.entry { margin-top: 17px; }
+.screen-heading { margin-bottom: 12px; }
+.scheduled-summary { justify-content: center; margin-top: 19px; padding: 12px; }
+.scheduled-summary strong { font-size: 24px; }
+.payment-form > .register { margin-top: 16px; }
+.history-detail { margin-top: 13px; }
